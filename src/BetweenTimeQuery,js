@@ -1,0 +1,20 @@
+class BetweenTimeQuery
+{
+    constructor(activity,starDate,endDate)
+    {
+        super(activity)
+    }
+    performQuery()
+    {
+        this.activityDataSet.forEach(activity,addActivityLogToResultSet(activity));
+    }
+    addActivityLogToResultSet(currentActivity)
+    {   
+        if(this.activity.date > currentActivity.date && this.activity.date < currentActivity.date)
+        {
+            let currentActivityLogType = ActivityTypeToLogTypeMap[currentActivity.activityType];
+            let curretnActivityLog = new currentActiviytLogType(activity);
+            this.resultSet.addRecord(currentActivityLog.logMsg);
+        }
+    }
+}

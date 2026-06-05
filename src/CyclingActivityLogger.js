@@ -1,4 +1,4 @@
-class CyclingActivityLoggger extends LandActivityLogger
+class CyclingActivityLogger extends LandActivityLogger
 {
     constructor(cyclingActivity)
     {
