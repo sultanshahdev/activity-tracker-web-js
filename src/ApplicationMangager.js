@@ -1,16 +1,37 @@
+import DatabaseHandler from './DatabaseHandler.js';
+import ActivityBuilder from './ActivityBuilder.js';
+import ActivityTypeToLogTypeMap from './ActivityTypeToLogTypeMap.js';
+import readline from 'readline';
+
 class ApplicationManager
 {
     #databaseHandler=null;
     #activityDataset=[];
     #currentActivityLogs=[];
+    #rl=null;
     activityBuilder = null;
     constructor()
     {
-        this.initializeDatabaseConncetion();
+        this.#rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+        this.initializeDatabaseConnection();
         this.initializeActivityBuilder();
-        this.fethcAllActivitiesFromDatabase();
-        this.displayActivities();
-        this.checkForInputAndPerformQuery();
+    }
+
+    async init()
+    {
+        try {
+            console.log("Initializing Activity Tracker...");
+            await this.#databaseHandler.initialize();
+            await this.fetchAllActivitiesFromDatabase();
+            this.displayActivities();
+            await this.checkForInputAndPerformQuery();
+        } catch(error) {
+            console.error("Error during initialization:", error.message);
+            this.#rl.close();
+        }
     }
     initializeActivityBuilder()
     {
@@ -18,19 +39,24 @@ class ApplicationManager
     }
     initializeDatabaseConnection() 
     {
-        this.databaseHandler = new DatabaseHandler();
+        this.#databaseHandler = new DatabaseHandler();
     }
-    fetchAllActivitiesFromDatabase()
+    async fetchAllActivitiesFromDatabase()
     {
-        this.databaseHandler.fetchAllActivities();
-        let activities = database.getResult();
-        activities.forEach(createAndAddActivity(activity));
+        await this.#databaseHandler.fetchAllActivities();
+        let activities = this.#databaseHandler.getResult();
+        activities.forEach((activity) => this.createAndAddActivity(activity));
     }
-    displayActivites()
+    displayActivities()
     {
-        this.emptyLogsDataset();
-        activityDataset.forEach(createAndAddLogsToLogArray(activity));
-        currentActivityLogs.forEach(logActivity(activityLog));
+        if(this.#activityDataset.length > 0) {
+            console.log("\n========== Activities ==========");
+            this.emptyLogsDataset();
+            this.#activityDataset.forEach((activity) => this.createAndAddLogsToLogArray(activity));
+            this.#currentActivityLogs.forEach((activityLog) => this.logActivity(activityLog));
+        } else {
+            console.log("\n========== No activities found ==========");
+        }
     }
     logActivity(activityLog)
     {
@@ -38,75 +64,109 @@ class ApplicationManager
     }
     createAndAddLogsToLogArray(activity)
     {
-        let activityType = ActivityTypeToLogTypeMap[activity.activityName];
+        let activityType = ActivityTypeToLogTypeMap[activity.activityType];
         let activityLog  = new activityType(activity); 
-        this.currentActivityLogs.push(activityLog);
+        this.#currentActivityLogs.push(activityLog);
+    }
+
+    #promptUser(question)
+    {
+        return new Promise((resolve) => {
+            this.#rl.question(question, (answer) => {
+                resolve(answer);
+            });
+        });
     }
     
-    checkForInputAndPerformQuery()
+    async checkForInputAndPerformQuery()
     {
         let userPrompt = null;
         do{
-            userPrompt = prompt(">>> QUERY [TOTAL-TIME] [BETWEEN (start date) (end date)] [ACTIVITY (activity type)]")
-            entertainPrompt(promptMsg);
-            
-        
+            userPrompt = await this.#promptUser(">>> QUERY [TOTAL-TIME] [BETWEEN (start date) (end date)] [ACTIVITY (activity type)] or QUIT\n>>> ");
+            if(userPrompt.toUpperCase() === 'QUIT') break;
+            await this.entertainPrompt(userPrompt);
         }
-        while(userPrompt!=='QUIT' || userPrompt!=="quit")
+        while(true);
+        this.#rl.close();
     }
-    entertainPrompt(promptMsg)
+    async entertainPrompt(promptMsg)
     {
-        if(promptMsg==='TOTAL-TIME')
+        let parts = promptMsg.split(' ');
+        if(parts[0].toUpperCase()==='TOTAL-TIME')
         {
-            fetchAllActivitiesFromDatabase();
-            displayActivities();
+            await this.fetchAllActivitiesFromDatabase();
+            this.displayActivities();
+            let totalDuration = this.calculateTotalTime();
+            console.log(`>>> Querying total activity time:\n>>> ${totalDuration}`);
         }
-        else if(promptMsg==='BETWEEN')
+        else if(parts[0].toUpperCase()==='BETWEEN')
         {
-            let startDate = new Date(prompt("Enter Starting Date :"));
-            let endDate   = new Date(prompt("Enter Ending   Date :"));
-            this.fetchBetweenTimeActivities({startDate,endDate});
+            let startDateStr = await this.#promptUser("Enter Starting Date (YYYY-MM-DD): ");
+            let endDateStr   = await this.#promptUser("Enter Ending Date (YYYY-MM-DD): ");
+            let startDate = new Date(startDateStr);
+            let endDate   = new Date(endDateStr);
+            await this.fetchBetweenTimeActivities({startDate,endDate});
             this.displayActivities();
         }
-        else if(promptMsg==='ACTIVITY-TYPE')
+        else if(parts[0].toUpperCase()==='ACTIVITY')
         {
-            let activityType =prompt("Enter Activity Type:")
-            this.fetchActivityOfType(activityType);
-            this.displayActivities()
+            // Capitalize first letter only (Cycling, Running, Walking, Swimming)
+            let rawType = parts[1];
+            if(!rawType) {
+                console.log(">>> Please specify an activity type: ACTIVITY CYCLING|RUNNING|WALKING|SWIMMING");
+                return;
+            }
+            let activityType = rawType.charAt(0).toUpperCase() + rawType.slice(1).toLowerCase();
+            await this.fetchActivityOfType(activityType);
+            console.log(`>>> Querying activities of type ${activityType.toUpperCase()}`);
+            this.displayActivities();
         }
     }
-    fetchBetweenTimeActivities(time)
+    async fetchBetweenTimeActivities(time)
     {
         this.emptyDataset();
-        databaseHandler.fetchActivitiesBetweenDate(time)
-        let result = databaseHandler.getResult();
-        result.forEach(createAndAddActivity(activity));
+        await this.#databaseHandler.fetchActivitiesBetweenDate(time);
+        let result = this.#databaseHandler.getResult();
+        result.forEach((activity) => this.createAndAddActivity(activity));
 
     }
-    fetchActivityOfType(activityType)
+    async fetchActivityOfType(activityType)
     {
-        this.emptyDataset()
-        this.databaseHandler.fetchActivityOfType(activityType)
-        let result = databaseHandler.getResult();
-        result.forEach(createAndAddActivity(activity));
+        this.emptyDataset();
+        await this.#databaseHandler.fetchActivityOfType(activityType);
+        let result = this.#databaseHandler.getResult();
+        result.forEach((activity) => this.createAndAddActivity(activity));
     }
     emptyDataset()
     {
-        this.activityDataset = [];
+        this.#activityDataset = [];
     }
     emptyLogsDataset()
     {
-        this.currentActivityLogs=[];
+        this.#currentActivityLogs=[];
     }
     
  
     createAndAddActivity(tempActivityFromDatabase)
     {
-        activityBuilder.setActivity(tempActivityFromDatabase);
-        let builtActivity = activityBuilder.createActivity();
-        this.activityDataset.push(builtActivity);
+        this.activityBuilder.setActivity(tempActivityFromDatabase);
+        let builtActivity = this.activityBuilder.createActivity();
+        this.#activityDataset.push(builtActivity);
+    }
+
+    calculateTotalTime()
+    {
+        let totalMinutes = 0;
+        this.#activityDataset.forEach((activity) => {
+            totalMinutes += activity.duration.minutes + (activity.duration.hours * 60);
+        });
+        let hours = Math.floor(totalMinutes / 60);
+        let minutes = totalMinutes % 60;
+        return `${hours} hours and ${minutes} minutes`;
     }
 
 
     
 }
+
+export default ApplicationManager;

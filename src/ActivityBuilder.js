@@ -1,3 +1,9 @@
+import SwimmingActivity from './SwimmingActivity.js';
+import RunningActivity from './RunningActivity.js';
+import CyclingActivity from './CyclingActivity.js';
+import WalkingActivity from './WalkingActivity.js';
+import { parseDuration } from './DurationUtils.js';
+
 class ActivityBuilder {
     constructor() {
         this.rawActivity = null;
@@ -29,10 +35,12 @@ class ActivityBuilder {
 
     normalize() {
         this.rawActivity.date = new Date(this.rawActivity.date);
-        this.rawActivity.duration = Temporal.Duration.from(this.rawActivity.duration);
+        this.rawActivity.duration = parseDuration(this.rawActivity.duration);
     }
  
     buildActivity() {
         this.builtActivity = new this.activityType(this.rawActivity);
     }
 }
+
+export default ActivityBuilder;

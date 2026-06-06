@@ -1,3 +1,5 @@
+import { durationToString } from './DurationUtils.js';
+
 class ActivityLogger
 {
     logMsg = null;
@@ -10,10 +12,16 @@ class ActivityLogger
 
     createGenericActivityFormat()
     {
+        const durationStr = typeof this.activity.duration === 'string' 
+            ? this.activity.duration 
+            : durationToString(this.activity.duration);
+        
         this.logMsg=
         `
         [${this.activity.date.toString()}] ${this.activity.activityType}: ${this.activity.name} at ${this.activity.location}
-             duration: ${this.activity.duration.toString()}      
+             duration: ${durationStr}      
         `;
     }
 }
+
+export default ActivityLogger;

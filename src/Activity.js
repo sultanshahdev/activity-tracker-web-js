@@ -8,5 +8,6 @@ class Activity
         this.date = activity.date;
         this.duration = activity.duration;
     }
-
 }
+
+export default Activity;

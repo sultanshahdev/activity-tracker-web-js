@@ -1,15 +1,19 @@
-class RunningActivityLogger extends LandActivityLogger()
+import LandActivityLogger from './LandActivityLogger.js';
+
+class RunningActivityLogger extends LandActivityLogger
 {
     constructor(runningActivity)
     {
-        super(runningActivity)
-        this.runningActivityLog()
+        super(runningActivity);
+        this.runningActivityLog();
     }
     runningActivityLog()
     {
         this.logMsg+=
         `
-        average pace : ${activity.averagePace}
-        `
+        average pace : ${this.activity.averagePace}
+        `;
     }
-} 
+}
+
+export default RunningActivityLogger;

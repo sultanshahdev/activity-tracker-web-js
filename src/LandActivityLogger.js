@@ -1,9 +1,11 @@
+import ActivityLogger from './ActivityLogger.js';
+
 class LandActivityLogger extends ActivityLogger
 {
     constructor(landActivity)
     {
-        super(landActivity)
-        this.landActivityLogMsg()
+        super(landActivity);
+        this.landActivityLogMsg();
     }
     landActivityLogMsg()
     {
@@ -11,6 +13,8 @@ class LandActivityLogger extends ActivityLogger
         `
             distance : ${this.activity.distance}km
             elev     : ${this.activity.elevation}m
-        `
+        `;
     }
 }
+
+export default LandActivityLogger;

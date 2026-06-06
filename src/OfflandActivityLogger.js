@@ -1,10 +1,11 @@
+import ActivityLogger from './ActivityLogger.js';
+
 class OfflandActivityLogger extends ActivityLogger
 {
     constructor(activity)
     {
-        super(activity)
-        this.offlandActivityLogMsg()
-
+        super(activity);
+        this.offlandActivityLogMsg();
     }
     offlandActivityLogMsg()
     {
@@ -16,3 +17,5 @@ class OfflandActivityLogger extends ActivityLogger
         
     }
 }
+
+export default OfflandActivityLogger;

@@ -1,10 +1,12 @@
+import Activity from './Activity.js';
+
 class OfflandActivity extends Activity
 {
     averagePace=null;
     constructor(activity)
     {
-        super(activity)
-        this.lapsCount  = activity.lapsCount ;
+        super(activity);
+        this.lapsCount  = activity.laps;
         this.lapLength = activity.lapLength;
         this.setAveragePace();
     }
@@ -14,3 +16,5 @@ class OfflandActivity extends Activity
         this.averagePace = this.lapsCount / this.lapLength;
     }
 }
+
+export default OfflandActivity;

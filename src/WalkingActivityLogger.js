@@ -1,9 +1,11 @@
+import LandActivityLogger from './LandActivityLogger.js';
+
 class WalkingActivityLogger extends LandActivityLogger
 {
     constructor(walkingActivity)
     {
-        super(walkingActivity)
-        this.walkingActivityLog()
+        super(walkingActivity);
+        this.walkingActivityLog();
     }
     walkingActivityLog()
     {
@@ -12,5 +14,6 @@ class WalkingActivityLogger extends LandActivityLogger
             average pace : ${this.activity.averagePace}
         `;
     }
-
 }
+
+export default WalkingActivityLogger;

@@ -1,4 +1,6 @@
-class LandActivity extends  Activity
+import Activity from './Activity.js';
+
+class LandActivity extends Activity
 {
     constructor(activity)
     {
@@ -8,3 +10,5 @@ class LandActivity extends  Activity
         this.elevation = activity.elevation;
     }
 }
+
+export default LandActivity;
