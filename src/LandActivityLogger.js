@@ -3,14 +3,14 @@ class LandActivityLogger extends ActivityLogger
     constructor(landActivity)
     {
         super(landActivity)
-        landActivityLogMsg()
+        this.landActivityLogMsg()
     }
-    set landActivityLogMsg()
+    landActivityLogMsg()
     {
-        logMsg +=
+        this.logMsg +=
         `
-            distance : ${activity.distance}km
-            elev     : ${activity.elevation}m
+            distance : ${this.activity.distance}km
+            elev     : ${this.activity.elevation}m
         `
     }
 }

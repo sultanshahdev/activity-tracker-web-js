@@ -4,9 +4,9 @@ class RunningActivity extends LandActivity
     {
         super(runningActivity)
         this.activityType="Running";
-        setAveragePace();
+        this.setAveragePace();
     }
-    set setAveragePace()
+    setAveragePace()
     {
         this.averagePace= this.duration.minutes / this.distance;
     }

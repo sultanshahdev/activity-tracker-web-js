@@ -6,21 +6,22 @@ class DatabaseHandler
 {
     constructor()
     {
-        this.client = createClientObject()
-        
+        createClientObject();
+        connectToDataBase();
     
     }
 
-    createClientObject()
+    async createClientObject()
     {
-        const client = new MongoClient(process.env.DATABASE_URI)
+        this.client = new MongoClient(process.env.DATABASE_URI)
+        
         return client;
     }
-    connectToDatabase()
+    async connectToDatabase()
     {
         try
         {
-            this.client.connect();
+            await this.client.connect();
         }
         catch(e)
         {
@@ -30,11 +31,15 @@ class DatabaseHandler
 
     async fetchAllActivities()
     {
-        this.result = await client.db('activites_db').collection('activities').findMany({});
+        this.result = await client.db('activites_db').collection('activities').find({});
     }
 
-    async fetchActivitiesBetweenDate({startDate:0, endDate: 0})
+    async fetchActivitiesBetweenDate({startDate, endDate})
     {
-
+        this.result = await client.db('activities_db').collection('activities').findMany({date:{$gte:startDate},$lte:endDate})
+    }
+    async fetchActivityOfType(type)
+    {
+        this.result = await client.db('activities_db').collection('activites').findMany({activityType:type});
     }
 }

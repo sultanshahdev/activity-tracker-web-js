@@ -4,9 +4,9 @@ class CyclingActivity extends LandActivity
     {
         super(cyclingActivity);
         this.activityType = "Cycling";
-        setAverageSpeed();
+        this.setAverageSpeed();
     }
-    set setAverageSpeed()
+    setAverageSpeed()
     {
         this.averageSpeed = this.distance/this.duration.hours;
     }

@@ -1,12 +1,12 @@
-class RunningActivity extends LandActivity
+class WalkingActivity extends LandActivity
 {
     constructor(runningActivity)
     {
         super(runningActivity)
         this.activityType="Walking";
-        AveragePace();
+        this.setAveragePace();
     }
-    set setAveragePace()
+    setAveragePace()
     {
         this.averagePace= this.duration.minutes / this.distance;
     }

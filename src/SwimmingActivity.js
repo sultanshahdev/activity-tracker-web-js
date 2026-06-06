@@ -3,12 +3,8 @@ class SwimmingActivity extends OfflandActivity
     constructor(swimmingActivity)
     {
         super(swimmingActivity);
-        this.activityName = "Swimming"
-        setPace();
+        this.activityType= "Swimming";
     }
-    set setPace()
-    {
-        this.averagePace = this.duration.minutes / distance; 
-    }
+    
 
 }

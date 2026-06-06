@@ -1,17 +1,17 @@
-class OfflandActivityLogger extends ActivityDetails
+class OfflandActivityLogger extends ActivityLogger
 {
     constructor(activity)
     {
         super(activity)
-        offlandActivityLogMsg()
+        this.offlandActivityLogMsg()
 
     }
-    set offlandActivityLogMsg()
+    offlandActivityLogMsg()
     {
         this.logMsg +=
         `
-        Laps Count : ${activity.lapsCount}
-        Lap Length : ${activity.lapLength}
+        Laps Count : ${this.activity.lapsCount}
+        Lap Length : ${this.activity.lapLength}
         `;
         
     }

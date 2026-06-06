@@ -3,9 +3,9 @@ class SwimmingActivityLogger extends OfflandActivityLogger()
     constructor(swimmingActivity)
     {
         super(swimmingActivity)
-        swimmingActivityLog()
+        this.swimmingActivityLog()
     }
-    set swimmingActivityLog()
+    swimmingActivityLog()
     {
         this.logMsg+=
         `

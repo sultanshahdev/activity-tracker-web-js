@@ -3,9 +3,9 @@ class CyclingActivityLogger extends LandActivityLogger
     constructor(cyclingActivity)
     {
         super(cyclingActivity)
-        CyclingActivityLog()
+        this.cyclingActivityLog()
     }
-    set CyclingActivityLog()
+    cyclingActivityLog()
     {
         this.logMsg +=
         `

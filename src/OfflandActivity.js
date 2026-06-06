@@ -6,11 +6,11 @@ class OfflandActivity extends Activity
         super(activity)
         this.lapsCount  = activity.lapsCount ;
         this.lapLength = activity.lapLength;
-        setAveragePace();
+        this.setAveragePace();
     }
     
-    set averagePace()
+    setAveragePace()
     {
-        return this.lapCount / lapLength;
+        this.averagePace = this.lapsCount / this.lapLength;
     }
 }
