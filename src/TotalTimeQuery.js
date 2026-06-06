@@ -1,8 +1,9 @@
 class TotalTimeQuery extends Query
 {
-    constructor()
+    constructor(activityDataSet)
     {
-        super();
+        super(activityDataSet);
+        performQuery();
     }
     performQuery()
     {

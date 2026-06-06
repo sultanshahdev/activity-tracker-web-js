@@ -1,9 +1,10 @@
 class Query
 {
-    activityDataSet = null;
 
-    constructor()
+    constructor(activityDataSet)
     {
+
+        this.activityDataSet = activityDataSet;
         this.resultSet = new ResultSet();
         
     }

@@ -1,8 +1,11 @@
 class BetweenTimeQuery
 {
-    constructor(activity,starDate,endDate)
+    constructor(activityDataSet,starDate,endDate)
     {
-        super(activity)
+        super(activityDataSet);
+        this.startDate= startDate;
+        this.endDate  = endDate;
+        performQuery();
     }
     performQuery()
     {

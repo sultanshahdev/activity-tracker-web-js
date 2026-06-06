@@ -1,10 +1,9 @@
 class ActivityType extends Query
 {
-    constructor(activityType)
+    constructor(activityDataSet,activityType)
     {
-        super();
+        super(activityDataSet);
         this.activityType = activityType;
-
     }
     performQuery()
     {
