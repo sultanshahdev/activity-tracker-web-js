@@ -4,196 +4,175 @@ dotenv.config();
 
 const connectionString = process.env.DATABASE_URI || "mongodb://localhost:27017";
 
-// Sample activities data based on COMP 2150 assignment specs
-const sampleActivities = [
-  // CYCLING ACTIVITIES
-  {
-    activityType: "Cycling",
-    name: "PerimeterCircuit",
-    location: "Winnipeg",
-    date: new Date("2022-07-23"),
-    duration: "PT2H45M",
-    distance: 80,
-    elevation: 50
-  },
-  {
-    activityType: "Cycling",
-    name: "RiverTrail",
-    location: "Assiniboine",
-    date: new Date("2022-07-20"),
-    duration: "PT1H30M",
-    distance: 45,
-    elevation: 15
-  },
-  {
-    activityType: "Cycling",
-    name: "MountainPass",
-    location: "Banff",
-    date: new Date("2022-08-05"),
-    duration: "PT4H",
-    distance: 120,
-    elevation: 800
-  },
-  {
-    activityType: "Cycling",
-    name: "CityCommute",
-    location: "Downtown",
-    date: new Date("2022-08-15"),
-    duration: "PT45M",
-    distance: 15,
-    elevation: 5
-  },
-  {
-    activityType: "Cycling",
-    name: "CoastalRide",
-    location: "Vancouver",
-    date: new Date("2022-09-10"),
-    duration: "PT3H",
-    distance: 65,
-    elevation: 200
-  },
 
-  // WALKING ACTIVITIES
-  {
-    activityType: "Walking",
-    name: "store",
-    location: "Selkirk",
-    date: new Date("2022-07-01"),
-    duration: "PT20M",
-    distance: 2,
-    elevation: 1
-  },
-  {
-    activityType: "Walking",
-    name: "ParkStroll",
-    location: "Assiniboine",
-    date: new Date("2022-07-15"),
-    duration: "PT45M",
-    distance: 3,
-    elevation: 0
-  },
-  {
-    activityType: "Walking",
-    name: "HikingTrail",
-    location: "BanffNationalPark",
-    date: new Date("2022-08-10"),
-    duration: "PT3H",
-    distance: 12,
-    elevation: 300
-  },
-  {
-    activityType: "Walking",
-    name: "CityWalk",
-    location: "Montreal",
-    date: new Date("2022-08-20"),
-    duration: "PT1H30M",
-    distance: 5,
-    elevation: 10
-  },
-  {
-    activityType: "Walking",
-    name: "BeachWalk",
-    location: "Tofino",
-    date: new Date("2022-09-05"),
-    duration: "PT2H",
-    distance: 8,
-    elevation: 20
-  },
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-  // RUNNING ACTIVITIES
-  {
-    activityType: "Running",
-    name: "Track",
-    location: "SilverHeights",
-    date: new Date("2022-08-10"),
-    duration: "PT30M",
-    distance: 5,
-    elevation: 0
-  },
-  {
-    activityType: "Running",
-    name: "MorningJog",
-    location: "RiverPark",
-    date: new Date("2022-08-12"),
-    duration: "PT45M",
-    distance: 8,
-    elevation: 15
-  },
-  {
-    activityType: "Running",
-    name: "HalfMarathon",
-    location: "Toronto",
-    date: new Date("2022-08-25"),
-    duration: "PT2H10M",
-    distance: 21,
-    elevation: 50
-  },
-  {
-    activityType: "Running",
-    name: "SpeedWork",
-    location: "Oval",
-    date: new Date("2022-09-01"),
-    duration: "PT1H",
-    distance: 10,
-    elevation: 5
-  },
-  {
-    activityType: "Running",
-    name: "EveningRun",
-    location: "Downtown",
-    date: new Date("2022-09-15"),
-    duration: "PT40M",
-    distance: 7,
-    elevation: 20
-  },
+function pick(arr) {
+  return arr[randomInt(0, arr.length - 1)];
+}
 
-  // SWIMMING ACTIVITIES
-  {
-    activityType: "Swimming",
-    name: "OpenSwim",
-    location: "PanAm",
-    date: new Date("2023-01-10"),
-    duration: "PT30M",
-    laps: 10,
-    lapLength: 50
-  },
-  {
-    activityType: "Swimming",
-    name: "Laps",
-    location: "ReccPlex",
-    date: new Date("2023-01-15"),
-    duration: "PT45M",
-    laps: 20,
-    lapLength: 25
-  },
-  {
-    activityType: "Swimming",
-    name: "WaterAerobics",
-    location: "AquaCenter",
-    date: new Date("2023-01-20"),
-    duration: "PT1H",
-    laps: 15,
-    lapLength: 50
-  },
-  {
-    activityType: "Swimming",
-    name: "Triathlon",
-    location: "LakeWinnipeg",
-    date: new Date("2023-02-05"),
-    duration: "PT45M",
-    laps: 80,
-    lapLength: 50
-  },
-  {
-    activityType: "Swimming",
-    name: "Casual",
-    location: "Community_Pool",
-    date: new Date("2023-02-12"),
-    duration: "PT30M",
-    laps: 8,
-    lapLength: 25
-  }
+/** Returns an ISO 8601 duration string from hours and minutes */
+function toDuration(hours, minutes) {
+  if (hours > 0 && minutes > 0) return `PT${hours}H${minutes}M`;
+  if (hours > 0) return `PT${hours}H`;
+  return `PT${minutes}M`;
+}
+
+/** Returns a random Date between two date strings */
+function randomDate(start, end) {
+  const s = new Date(start).getTime();
+  const e = new Date(end).getTime();
+  return new Date(s + Math.random() * (e - s));
+}
+
+// ──────────────────────────────────────────────────────────
+//  Name & location pools for each activity type
+// ──────────────────────────────────────────────────────────
+
+const cyclingNames = [
+  "PerimeterCircuit", "RiverTrail", "MountainPass", "CityCommute",
+  "CoastalRide", "HillClimb", "ValleyLoop", "LakeshoreRide",
+  "ForestPath", "DowntownLoop", "SunriseRide", "SunsetCruise",
+  "CountryRoad", "BridgeRoute", "CanalPath", "PrairieRide",
+  "IslandLoop", "HarborTrail", "UniversityLoop", "IndustrialRoute",
+  "ParkCircuit", "TrailblazRide", "VillageTour", "WaterfrontRide",
+  "RidgeRoad"
 ];
+
+const walkingNames = [
+  "store", "ParkStroll", "HikingTrail", "CityWalk", "BeachWalk",
+  "NatureTrail", "LakesidePath", "GardenWalk", "HistoricTour",
+  "RiverWalk", "ForestHike", "SunsetWalk", "MorningStroll",
+  "MallWalk", "NeighborhoodLoop", "CampusWalk", "MarketWalk",
+  "BridgeWalk", "BoardwalkStroll", "MeadowHike", "HillsideTrail",
+  "DogWalk", "LunchWalk", "SchoolRoute", "TrailWalk"
+];
+
+const runningNames = [
+  "Track", "MorningJog", "HalfMarathon", "SpeedWork", "EveningRun",
+  "TempoRun", "IntervalSprint", "LongRun", "RecoveryJog", "HillRepeats",
+  "ParkRun", "TrailRun", "FartlekSession", "RacePrep", "CooldownRun",
+  "5kRace", "10kRace", "MidnightRun", "CrossCountry", "StadiumStairs",
+  "BeachRun", "TreadmillRun", "MarathonTraining", "SunriseJog",
+  "RelayLeg"
+];
+
+const swimmingNames = [
+  "OpenSwim", "Laps", "WaterAerobics", "Triathlon", "Casual",
+  "SprintLaps", "EnduranceSwim", "BackstrokeDrill", "FreestyleLaps",
+  "MedleyPractice", "DivePractice", "RelaySwim", "RecoverySwim",
+  "TechniqueWork", "KickDrill", "PullSet", "WarmupSwim", "CooldownSwim",
+  "CompetitionPrep", "OpenWater", "LakeCrossing", "PoolParty",
+  "MasterSwim", "SwimClinic", "MorningLaps"
+];
+
+const locations = [
+  "Winnipeg", "Assiniboine", "Banff", "Downtown", "Vancouver",
+  "Selkirk", "Montreal", "Tofino", "Toronto", "Calgary",
+  "Edmonton", "Ottawa", "Halifax", "Victoria", "Kelowna",
+  "Saskatoon", "Regina", "StJohns", "Fredericton", "Charlottetown",
+  "ThunderBay", "Whitehorse", "Yellowknife", "Moncton", "Kamloops",
+  "BanffNationalPark", "JasperPark", "WhistlerVillage", "NiagaraFalls",
+  "PrinceGeorge", "SilverHeights", "RiverPark", "Oval", "Community_Pool",
+  "PanAm", "ReccPlex", "AquaCenter", "LakeWinnipeg", "GrandBeach",
+  "BirdsHillPark"
+];
+
+// ──────────────────────────────────────────────────────────
+//  Activity generators
+// ──────────────────────────────────────────────────────────
+
+function generateCycling() {
+  const distKm = randomInt(10, 150);
+  const speedKmH = randomInt(18, 38);
+  const totalMinutes = Math.round((distKm / speedKmH) * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const mins  = totalMinutes % 60;
+
+  return {
+    activityType: "Cycling",
+    name: pick(cyclingNames),
+    location: pick(locations),
+    date: randomDate("2022-07-01", "2023-02-28"),
+    duration: toDuration(hours, mins),
+    distance: distKm,
+    elevation: randomInt(0, 900)
+  };
+}
+
+function generateWalking() {
+  const distKm = randomInt(1, 15);
+  const paceMinPerKm = randomInt(10, 20);
+  const totalMinutes = distKm * paceMinPerKm;
+  const hours = Math.floor(totalMinutes / 60);
+  const mins  = totalMinutes % 60;
+
+  return {
+    activityType: "Walking",
+    name: pick(walkingNames),
+    location: pick(locations),
+    date: randomDate("2022-07-01", "2023-02-28"),
+    duration: toDuration(hours, mins),
+    distance: distKm,
+    elevation: randomInt(0, 350)
+  };
+}
+
+function generateRunning() {
+  const distKm = randomInt(2, 42);
+  const paceMinPerKm = randomInt(4, 8);
+  const totalMinutes = distKm * paceMinPerKm;
+  const hours = Math.floor(totalMinutes / 60);
+  const mins  = totalMinutes % 60;
+
+  return {
+    activityType: "Running",
+    name: pick(runningNames),
+    location: pick(locations),
+    date: randomDate("2022-07-01", "2023-02-28"),
+    duration: toDuration(hours, mins),
+    distance: distKm,
+    elevation: randomInt(0, 200)
+  };
+}
+
+function generateSwimming() {
+  const lapLength = pick([25, 50]);
+  const laps = randomInt(4, 100);
+  const totalMinutes = Math.round(laps * (lapLength === 50 ? 1.5 : 0.8));
+  const hours = Math.floor(totalMinutes / 60);
+  const mins  = totalMinutes % 60;
+
+  return {
+    activityType: "Swimming",
+    name: pick(swimmingNames),
+    location: pick(locations),
+    date: randomDate("2022-07-01", "2023-02-28"),
+    duration: toDuration(hours, mins),
+    laps: laps,
+    lapLength: lapLength
+  };
+}
+
+// ──────────────────────────────────────────────────────────
+//  Build the 500 activities — 125 per type
+// ──────────────────────────────────────────────────────────
+
+const TOTAL = 500;
+const PER_TYPE = TOTAL / 4; // 125
+
+const sampleActivities = [];
+
+for (let i = 0; i < PER_TYPE; i++) sampleActivities.push(generateCycling());
+for (let i = 0; i < PER_TYPE; i++) sampleActivities.push(generateWalking());
+for (let i = 0; i < PER_TYPE; i++) sampleActivities.push(generateRunning());
+for (let i = 0; i < PER_TYPE; i++) sampleActivities.push(generateSwimming());
+
+// ──────────────────────────────────────────────────────────
+//  Seed the database
+// ──────────────────────────────────────────────────────────
 
 async function seedDatabase() {
   const client = new MongoClient(connectionString);
@@ -213,14 +192,14 @@ async function seedDatabase() {
       console.log("✓ No existing collection to drop");
     }
 
-    // Insert sample activities
+    // Insert all 500 activities
     const result = await collection.insertMany(sampleActivities);
     console.log(`✓ Inserted ${result.insertedCount} activities into the database`);
 
     // Display summary
     console.log("\n========== Inserted Activities Summary ==========");
     const activities = await collection.find({}).toArray();
-    
+
     const activityTypes = {};
     activities.forEach((activity) => {
       if (!activityTypes[activity.activityType]) {
@@ -234,12 +213,16 @@ async function seedDatabase() {
       console.log(`  ${type}: ${count} activities`);
     });
 
-    console.log("\nSample activities:");
-    activities.slice(0, 5).forEach((activity) => {
-      console.log(`  [${activity.date.toISOString().split("T")[0]}] ${activity.activityType}: ${activity.name} at ${activity.location}`);
+    console.log("\nSample activities (first 10):");
+    activities.slice(0, 10).forEach((activity) => {
+      const dateStr = activity.date.toISOString().split("T")[0];
+      const extra = activity.activityType === "Swimming"
+        ? `${activity.laps} laps × ${activity.lapLength}m`
+        : `${activity.distance}km, elev ${activity.elevation}m`;
+      console.log(`  [${dateStr}] ${activity.activityType}: ${activity.name} at ${activity.location} — ${activity.duration} (${extra})`);
     });
 
-    console.log("\n✓ Database seeding completed successfully!");
+    console.log(`\n✓ Database seeding completed successfully! (${result.insertedCount} activities)`);
     console.log("You can now run: npm start");
 
   } catch (error) {

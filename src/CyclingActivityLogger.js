@@ -11,7 +11,7 @@ class CyclingActivityLogger extends LandActivityLogger
     {
         this.logMsg +=
         `
-        average speed : ${this.activity.averageSpeed}km/h
+        average speed : ${this.activity.averageSpeed} km/h
         `;
     }
 }

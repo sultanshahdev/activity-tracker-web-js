@@ -1,4 +1,4 @@
-# COMP 2150 Activity Tracker
+# Activity Tracker
 
 A console-based activity tracker application that lets you manage cycling, running, walking, and swimming activities.
 

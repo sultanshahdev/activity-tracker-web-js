@@ -11,7 +11,7 @@ class RunningActivityLogger extends LandActivityLogger
     {
         this.logMsg+=
         `
-        average pace : ${this.activity.averagePace}
+        average pace : ${this.activity.averagePace} min/km
         `;
     }
 }

@@ -11,7 +11,7 @@ class SwimmingActivityLogger extends OfflandActivityLogger
     {
         this.logMsg+=
         `
-        average pace : ${this.activity.averagePace}
+        average pace : ${this.activity.averagePace} min/km
         `;
     }
 }

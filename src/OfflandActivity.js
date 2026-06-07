@@ -13,7 +13,10 @@ class OfflandActivity extends Activity
     
     setAveragePace()
     {
-        this.averagePace = this.lapsCount / this.lapLength;
+
+        const totalMinutes = this.duration.hours * 60 + this.duration.minutes;
+        const distance     = this.lapsCount * this.lapLength / 1000
+        this.averagePace = totalMinutes > 0 ? (totalMinutes / distance).toFixed(2) : 0;
     }
 }
 
